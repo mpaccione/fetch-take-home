@@ -41,7 +41,7 @@ const Menu = ({
   const [ageMax, setAgeMax] = useState();
   const [ageMin, setAgeMin] = useState();
   const [selectedBreed, setSelectedBreed] = useState("");
-  const [sort, setSort] = useState("breed:desc")
+  const [sort, setSort] = useState("breed:asc")
 
   useEffect(() => {
     (async () => {
@@ -73,7 +73,7 @@ const Menu = ({
     }
 
     setSearchParams(params);
-  }, [breeds, ageMax, ageMin, selectedBreed]);
+  }, [breeds, ageMax, ageMin, selectedBreed, sort]);
 
   const validate = (cb) => {
     if (ageMin > ageMax) {
@@ -117,6 +117,7 @@ const Menu = ({
               return { key: idx, text, value };
             })}
             onChange={(_, { value }) => {
+              console.log(value)
               setSort(value)
             }}
             placeholder={"Sort by Breed"}
