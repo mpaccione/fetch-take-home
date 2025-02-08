@@ -10,14 +10,15 @@ const getBreeds = async () => {
   }
 };
 
-interface searchParams {
-  breeds: [];
-  ageMax: Number;
-  ageMin: Number;
+interface SearchParams {
+  breeds: string[];
+  ageMax: number;
+  ageMin: number;
 }
 
-const getDogs = async (searchParams: searchParams) => {
+const getDogs = async (searchParams: SearchParams) => {
   try {
+    // @ts-ignore
     const query = new URLSearchParams(searchParams);
     const res = await get(`/dogs/search?${query.toString()}`);
 
@@ -33,14 +34,14 @@ const getDogs = async (searchParams: searchParams) => {
   }
 };
 
-const postMatch = async (match: []) => {
-  try { 
-    const res = await post ('/dogs/match', match)
+const postMatch = async (match: string[]) => {
+  try {
+    const res = await post("/dogs/match", match);
     return res;
   } catch (err) {
-    alert(err?.toString())
+    alert(err?.toString());
     return false;
   }
-}
+};
 
 export { getBreeds, getDogs, postMatch };

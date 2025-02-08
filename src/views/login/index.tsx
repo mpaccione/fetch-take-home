@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { postLogin } from "./actions";
 import { useNavigate } from "react-router";
+// @ts-ignore
 import Dog from "../../assets/dog.svg?react";
 
 const LoginContainer = styled.div`
@@ -32,7 +33,7 @@ const Login = () => {
   const submitLogin = async () => {
     const res = await postLogin({ email, name });
 
-    if (res?.status === 200) {
+    if (res && res?.status === 200) {
         return navigate('/dogs')
     } else {
         alert(`Login Failure: ${res}`)

@@ -1,7 +1,8 @@
 import { Icon, Image, Segment } from "semantic-ui-react";
 import styled from "styled-components";
 
-import { FavoritesList } from "./types";
+import { Dog } from "../types";
+import { FavoritesList as FavoritesType } from "./types";
 
 const List = styled.div`
   position: fixed;
@@ -23,12 +24,12 @@ const List = styled.div`
   }
 `;
 
-const FavoritesList = ({ favoriteDogs, removeFavorite }: FavoritesList) => (
+const FavoritesList = ({ favoriteDogs, removeFavorite }: FavoritesType) => (
   <List>
     <Segment>
       <h4>Favorites</h4>
-      {Object.keys(favoriteDogs).length > 0 &&
-        Object.values(favoriteDogs).map((d) => (
+      {favoriteDogs.length > 0 &&
+        favoriteDogs.map((d: Dog) => (
           <div className="row">
             <Image src={d.img} />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

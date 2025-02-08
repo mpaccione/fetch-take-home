@@ -38,54 +38,60 @@ const Menu = ({
   submit: Function;
 }) => {
   const [breeds, setBreeds] = useState([]);
-  const [ageMax, setAgeMax] = useState();
-  const [ageMin, setAgeMin] = useState();
+  const [ageMax, setAgeMax] = useState<number | undefined>();
+  const [ageMin, setAgeMin] = useState<number | undefined>();
   const [selectedBreed, setSelectedBreed] = useState("");
-  const [sort, setSort] = useState("breed:asc")
+  const [sort, setSort] = useState("breed:asc");
 
   useEffect(() => {
     (async () => {
       const res = await getBreeds();
-      res?.data && setBreeds(res.data);
+      res && res?.data && setBreeds(res.data);
     })();
   }, []);
 
   useEffect(() => {
     const params = {
       from: 0,
-      size: 10
-    }
+      size: 10,
+    };
 
     if (ageMax) {
-      params.ageMax = ageMax
+      (params as { from: number; size: number; ageMax: number }).ageMax =
+        ageMax;
     }
 
     if (ageMin) {
-      params.ageMin = ageMin
+      (params as { from: number; size: number; ageMin: number }).ageMin =
+        ageMin;
     }
 
     if (selectedBreed) {
-      params.breeds = [selectedBreed]
+      (params as { from: number; size: number; breeds: string[] }).breeds = [
+        selectedBreed,
+      ];
     }
 
     if (sort) {
-      params.sort = sort;
+      (params as { from: number; size: number; sort: string }).sort = sort;
     }
 
     setSearchParams(params);
   }, [breeds, ageMax, ageMin, selectedBreed, sort]);
 
-  const validate = (cb) => {
-    if (ageMin > ageMax) {
-      return alert("Min Age cannot exceed Max Age");
+  const validate = (cb: Function) => {
+    if (ageMin !== undefined && ageMax !== undefined) {
+      if (ageMin > ageMax) {
+        return alert("Min Age cannot exceed Max Age");
+      }
+
+      if (ageMax < ageMin) {
+        return alert("Max Age cannot be below Min Age");
+      }
     }
 
-    if (ageMax < ageMin) {
-      return alert("Max Age cannot be below Min Age");
-    }
-
-    cb()
-  } 
+    cb();
+  };
 
   return (
     <div>
@@ -93,7 +99,7 @@ const Menu = ({
         <div className="row" style={{ justifyContent: "space-between" }}>
           <Dropdown
             onChange={(_, { value }) => {
-              setSelectedBreed(value);
+              typeof value === 'string' && setSelectedBreed(value);
             }}
             options={breeds.map((b, idx) => {
               return { key: idx, text: b, value: b };
@@ -116,10 +122,7 @@ const Menu = ({
             ].map(({ text, value }, idx) => {
               return { key: idx, text, value };
             })}
-            onChange={(_, { value }) => {
-              console.log(value)
-              setSort(value)
-            }}
+            onChange={(_, { value }) => setSort(value as string)}
             placeholder={"Sort by Breed"}
             value={sort}
           />
@@ -128,7 +131,7 @@ const Menu = ({
         <div className="row">
           <Input
             onChange={({ target: { value } }) => {
-              value ? setAgeMin(parseInt(value)) : setAgeMin();
+              value ? setAgeMin(parseInt(value)) : setAgeMin(0);
             }}
             placeholder="Min Age"
             type="number"
@@ -136,7 +139,7 @@ const Menu = ({
           />
           <Input
             onChange={({ target: { value } }) => {
-              value ? setAgeMax(parseInt(value)) : setAgeMax();
+              value ? setAgeMax(parseInt(value)) : setAgeMax(undefined);
             }}
             placeholder="Max Age"
             type="number"

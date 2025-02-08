@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-
 import {
   Button,
   Icon,
   Image,
   Pagination,
+  PaginationProps,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "semantic-ui-react";
 
+import { Dog, FavoriteDogsContextType } from "./types";
 import { FavoritesList } from "./components/FavoritesList";
 import { getDogs, postMatch } from "./actions";
 import { MatchModal } from "./components/MatchModal";
@@ -20,7 +21,8 @@ import { MemoizedMenu } from "./components/Menu";
 import { useFavoriteDogs } from "./context";
 
 const Dogs = () => {
-  const { addFavorite, favoriteDogs, removeFavorite } = useFavoriteDogs();
+  const { addFavorite, favoriteDogs, removeFavorite } =
+    useFavoriteDogs() as FavoriteDogsContextType;
 
   const [activePage, setActivePage] = useState(0);
   const [match, setMatch] = useState();
@@ -34,20 +36,24 @@ const Dogs = () => {
   // pagination
   useEffect(() => {
     (async () => {
+      //@ts-ignore
       const res = await getDogs(searchParams);
       res && setResults(res);
     })();
   }, [activePage]);
 
   const submit = async () => {
+    //@ts-ignore
     const res = await getDogs(searchParams);
     res && setResults(res);
   };
 
   const submitMatch = async () => {
-    const res = await postMatch(Object.values(favoriteDogs).map((d) => d.id));
-    if (res?.data?.match) {
-      const matchingDog = results.dogs.find((d) => {
+    const res = await postMatch(
+      (Object.values(favoriteDogs) as Dog[]).map((d) => d.id)
+    );
+    if (res && res?.data?.match) {
+      const matchingDog = results.dogs.find((d: Dog) => {
         return d.id === res.data.match;
       });
       setMatch(matchingDog);
@@ -72,7 +78,7 @@ const Dogs = () => {
             </TableHeader>
             <TableBody>
               {results.dogs.length > 1 &&
-                results.dogs.map((d, idx) => (
+                results.dogs.map((d: Dog, idx) => (
                   <TableRow key={idx}>
                     <TableCell>
                       <Image src={d.img} style={{ maxWidth: "180px" }} />
@@ -99,9 +105,10 @@ const Dogs = () => {
         </div>
         <Pagination
           activePage={activePage}
-          onPageChange={(e, { activePage }: { activePage: Number }) => {
-            setSearchParams({ ...searchParams, from: activePage * 10 - 10 });
-            setActivePage(activePage);
+          onPageChange={(_, { activePage }: PaginationProps) => {
+            const page = typeof activePage === "number" ? activePage : 1;
+            setSearchParams({ ...searchParams, from: page * 10 - 10 });
+            setActivePage(page);
           }}
           style={{
             display: "flex",
@@ -123,7 +130,9 @@ const Dogs = () => {
         {match && <MatchModal {...{ match, setMatch }} />}
       </div>
       {Object.keys(favoriteDogs).length > 0 && (
-        <FavoritesList {...{ favoriteDogs, removeFavorite }} />
+        <FavoritesList
+          {...{ favoriteDogs: Object.values(favoriteDogs), removeFavorite }}
+        />
       )}
     </>
   );
