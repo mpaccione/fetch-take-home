@@ -4,7 +4,7 @@ https://www.loom.com/share/9e3d67577d75416fb1d3f7351468db8d
 
 # Code Video Walkthrough
 
-https://www.loom.com/share/0bfcdeac36604f99bf67bc3b1f753559
+https://www.loom.com/share/132e611c751b4450bc3c6c418de13c10
 
 ## How to Run
 
@@ -14,3 +14,5 @@ https://www.loom.com/share/0bfcdeac36604f99bf67bc3b1f753559
 - localhost:5173
 
 # fetch-take-home-2025
+
+https://mpaccione.github.io/fetch-take-home/
